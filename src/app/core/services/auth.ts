@@ -70,7 +70,7 @@ export class AuthService {
   // Escuta mudanças no estado de autenticação
   // Útil para reagir quando o token expira ou o usuário faz login
   onAuthChange(callback: (session: any) => void) {
-    this.supabase.client.auth.onAuthStateChange((_event, session) => {
+    this.supabase.client.auth.onAuthStateChange((_event: any, session: any) => {
       callback(session);
     });
   }
