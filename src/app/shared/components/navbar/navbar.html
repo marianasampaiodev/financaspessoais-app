@@ -1,0 +1,80 @@
+<nav class="bg-gradient-to-r from-violet-600 to-indigo-600 shadow-lg">
+  <div class="max-w-6xl mx-auto px-4">
+    <div class="flex items-center justify-between h-16">
+
+      <!-- Logo do app -->
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+          <span class="text-white font-bold text-sm">$</span>
+        </div>
+        <span class="text-white font-bold text-lg">Minhas Finanças </span>
+      </div>
+
+      <!-- Links de navegação — visíveis só no desktop -->
+      <div class="hidden md:flex items-center gap-1">
+        <a routerLink="/dashboard" routerLinkActive="bg-white bg-opacity-20"
+          class="text-white text-sm px-4 py-2 rounded-lg hover:bg-white hover:bg-opacity-10 transition">
+          Dashboard
+        </a>
+        <a routerLink="/transactions" routerLinkActive="bg-white bg-opacity-20"
+          class="text-white text-sm px-4 py-2 rounded-lg hover:bg-white hover:bg-opacity-10 transition">
+          Transações
+        </a>
+        <a routerLink="/goals" routerLinkActive="bg-white bg-opacity-20"
+          class="text-white text-sm px-4 py-2 rounded-lg hover:bg-white hover:bg-opacity-10 transition">
+          Metas
+        </a>
+        <a routerLink="/reports" routerLinkActive="bg-white bg-opacity-20"
+          class="text-white text-sm px-4 py-2 rounded-lg hover:bg-white hover:bg-opacity-10 transition">
+          Relatórios
+        </a>
+      </div>
+
+      <!-- Nome do usuário e logout — só no desktop -->
+      <div class="hidden md:flex items-center gap-3">
+        <span class="text-white text-sm opacity-90">Olá, {{ userName }}!</span>
+        <button (click)="onLogout()"
+          class="bg-white bg-opacity-20 hover:bg-opacity-30 text-white text-sm px-4 py-2 rounded-lg transition">
+          Sair
+        </button>
+      </div>
+
+      <!-- Botão hamburguer — só no mobile -->
+      <button (click)="toggleMenu()"
+        class="md:hidden text-white p-2 rounded-lg hover:bg-white hover:bg-opacity-10 transition">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path *ngIf="!menuOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+          <path *ngIf="menuOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+
+    </div>
+
+    <!-- Menu mobile — aparece quando menuOpen = true -->
+    <div *ngIf="menuOpen" class="md:hidden pb-4 flex flex-col gap-1">
+      <a routerLink="/dashboard" (click)="toggleMenu()"
+        class="text-white text-sm px-4 py-2 rounded-lg hover:bg-white hover:bg-opacity-10 transition">
+        Dashboard
+      </a>
+      <a routerLink="/transactions" (click)="toggleMenu()"
+        class="text-white text-sm px-4 py-2 rounded-lg hover:bg-white hover:bg-opacity-10 transition">
+        Transações
+      </a>
+      <a routerLink="/goals" (click)="toggleMenu()"
+        class="text-white text-sm px-4 py-2 rounded-lg hover:bg-white hover:bg-opacity-10 transition">
+        Metas
+      </a>
+      <a routerLink="/reports" (click)="toggleMenu()"
+        class="text-white text-sm px-4 py-2 rounded-lg hover:bg-white hover:bg-opacity-10 transition">
+        Relatórios
+      </a>
+      <div class="border-t border-white border-opacity-20 mt-2 pt-2 flex items-center justify-between px-4">
+        <span class="text-white text-sm opacity-90">Olá, {{ userName }}!</span>
+        <button (click)="onLogout()" class="bg-white bg-opacity-20 text-white text-sm px-4 py-2 rounded-lg">
+          Sair
+        </button>
+      </div>
+    </div>
+
+  </div>
+</nav>
