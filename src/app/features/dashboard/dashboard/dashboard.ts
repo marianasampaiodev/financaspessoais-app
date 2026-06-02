@@ -44,8 +44,10 @@ export class Dashboard implements OnInit, OnDestroy {
       this.userName = user?.user_metadata?.['name'] || user?.user_metadata?.['full_name'] || user?.email || 'Usuário';
       await this.loadTransactions();
 
-      this.subscription = this.transactionService.transactionsUpdated$.subscribe(async () => {
-        await this.loadTransactions();
+      this.subscription = this.transactionService.transactionsUpdated$.subscribe(() => {
+        this.loadTransactions().catch(error => {
+          console.error('Erro ao recarregar transações:', error);
+        });
       });
     } catch (error) {
       console.error('Erro no ngOnInit:', error);

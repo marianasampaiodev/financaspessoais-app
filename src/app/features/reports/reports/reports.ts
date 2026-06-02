@@ -45,8 +45,10 @@ export class Reports implements OnInit, OnDestroy, AfterViewInit {
   async ngOnInit() {
     await this.loadData();
 
-    this.subscription = this.transactionService.transactionsUpdated$.subscribe(async () => {
-      await this.loadData();
+    this.subscription = this.transactionService.transactionsUpdated$.subscribe(() => {
+      this.loadData().catch(error => {
+        console.error('Erro ao recarregar relatório:', error);
+      });
     });
   }
 
