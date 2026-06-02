@@ -44,7 +44,9 @@ export class Dashboard implements OnInit, OnDestroy {
       this.userName = user?.user_metadata?.['name'] || user?.user_metadata?.['full_name'] || user?.email || 'Usuário';
       await this.loadTransactions();
 
+      console.log('Dashboard se inscrevendo no observable de transações');
       this.subscription = this.transactionService.transactionsUpdated$.subscribe(() => {
+        console.log('Dashboard recebeu notificação de mudança');
         this.loadTransactions().catch(error => {
           console.error('Erro ao recarregar transações:', error);
         });
@@ -65,16 +67,18 @@ export class Dashboard implements OnInit, OnDestroy {
   async loadTransactions() {
     try {
       this.loading = true;
+      console.log('Carregando transações do mês:', this.currentMonth);
       this.transactions = await this.transactionService.getByMonth(
         this.currentYear,
         this.currentMonth
       );
+      console.log('Transações carregadas:', this.transactions.length);
       this.calculateTotals();
     } catch (error) {
       console.error('Erro ao carregar transações:', error);
     } finally {
       this.loading = false;
-      this.cdr.detectChanges(); // força atualização da tela
+      this.cdr.detectChanges();
     }
   }
 

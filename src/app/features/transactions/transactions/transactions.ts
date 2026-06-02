@@ -111,11 +111,14 @@ export class Transactions implements OnInit {
     this.errorMessage = '';
 
     try {
+      console.log('Criando nova transação');
       await this.transactionService.create(this.form.value);
+      console.log('Transação criada com sucesso');
       await this.loadData(); // recarrega a lista após salvar
       this.closeModal();
     } catch (error) {
       this.errorMessage = 'Erro ao salvar transação. Tente novamente.';
+      console.error('Erro ao salvar:', error);
     } finally {
       this.submitting = false;
       this.cdr.detectChanges();

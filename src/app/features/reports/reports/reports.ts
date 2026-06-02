@@ -43,9 +43,12 @@ export class Reports implements OnInit, OnDestroy, AfterViewInit {
   ) {}
 
   async ngOnInit() {
+    console.log('Reports ngOnInit iniciado');
     await this.loadData();
 
+    console.log('Reports se inscrevendo no observable de transações');
     this.subscription = this.transactionService.transactionsUpdated$.subscribe(() => {
+      console.log('Reports recebeu notificação de mudança');
       this.loadData().catch(error => {
         console.error('Erro ao recarregar relatório:', error);
       });
@@ -68,17 +71,18 @@ export class Reports implements OnInit, OnDestroy, AfterViewInit {
   async loadData() {
     try {
       this.loading = true;
+      console.log('Carregando dados do relatório');
       this.transactions = await this.transactionService.getByMonth(
         this.currentYear,
         this.currentMonth
       );
+      console.log('Relatório carregado com', this.transactions.length, 'transações');
       this.calculateSummary();
     } catch (error) {
       console.error('Erro ao carregar relatório:', error);
     } finally {
       this.loading = false;
       this.cdr.detectChanges();
-      // Renderiza os gráficos após carregar os dados
       setTimeout(() => this.renderCharts(), 100);
     }
   }

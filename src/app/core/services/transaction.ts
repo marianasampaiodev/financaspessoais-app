@@ -38,7 +38,8 @@ export class TransactionService {
   // Busca transações do mês atual
   async getByMonth(year: number, month: number): Promise<Transaction[]> {
     const start = `${year}-${String(month).padStart(2, '0')}-01`;
-    const end = `${year}-${String(month).padStart(2, '0')}-31`;
+    const lastDay = new Date(year, month, 0).getDate();
+    const end = `${year}-${String(month).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`;
 
     const { data, error } = await this.supabase.client
       .from('transactions')
@@ -60,10 +61,11 @@ export class TransactionService {
     .from('transactions')
     .insert({
       ...transaction,
-      user_id: user?.id // adiciona o user_id automaticamente
+      user_id: user?.id
     });
 
   if (error) throw error;
+  console.log('Transação criada, emitindo evento');
   this.transactionsUpdated.next();
 }
 
