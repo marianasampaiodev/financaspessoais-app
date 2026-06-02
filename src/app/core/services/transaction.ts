@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
+import { Subject } from 'rxjs';
 import { SupabaseService } from './supabase';
+
 export interface Transaction {
   id?: string;
   user_id?: string;
@@ -16,6 +18,9 @@ export interface Transaction {
   providedIn: 'root'
 })
 export class TransactionService {
+
+  private transactionsUpdated = new Subject<void>();
+  transactionsUpdated$ = this.transactionsUpdated.asObservable();
 
   constructor(private supabase: SupabaseService) {}
 
@@ -47,10 +52,10 @@ export class TransactionService {
   }
 
   // Cria uma nova transação
-  
+
   async create(transaction: Transaction): Promise<void> {
   const { data: { user } } = await this.supabase.client.auth.getUser();
-  
+
   const { error } = await this.supabase.client
     .from('transactions')
     .insert({
@@ -59,6 +64,7 @@ export class TransactionService {
     });
 
   if (error) throw error;
+  this.transactionsUpdated.next();
 }
 
   // Deleta uma transação
@@ -69,5 +75,6 @@ export class TransactionService {
       .eq('id', id);
 
     if (error) throw error;
+    this.transactionsUpdated.next();
   }
 }

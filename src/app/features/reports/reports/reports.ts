@@ -1,5 +1,6 @@
-import { Component, OnInit, ChangeDetectorRef, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Subscription } from 'rxjs';
 import { TransactionService, Transaction } from '../../../core/services/transaction';
 import { Navbar } from '../../../shared/components/navbar/navbar';
 import { Chart, ArcElement, Tooltip, Legend, PieController } from 'chart.js';
@@ -14,19 +15,14 @@ Chart.register(ArcElement, Tooltip, Legend, PieController);
   templateUrl: './reports.html',
   styleUrl: './reports.scss'
 })
-export class Reports implements OnInit, AfterViewInit {
+export class Reports implements OnInit, OnDestroy, AfterViewInit {
 
-  // Referências aos elementos canvas dos gráficos
   @ViewChild('expenseChart') expenseChartRef!: ElementRef;
   @ViewChild('incomeChart') incomeChartRef!: ElementRef;
 
   transactions: Transaction[] = [];
   loading = true;
-
-  // Resumo de despesas por categoria
   expenseSummary: { name: string; color: string; total: number; percentage: number }[] = [];
-
-  // Resumo de receitas por categoria
   incomeSummary: { name: string; color: string; total: number; percentage: number }[] = [];
 
   totalIncome = 0;
@@ -37,9 +33,9 @@ export class Reports implements OnInit, AfterViewInit {
   currentMonth = new Date().getMonth() + 1;
   currentYear = new Date().getFullYear();
 
-  // Instâncias dos gráficos
   private expenseChart: Chart | null = null;
   private incomeChart: Chart | null = null;
+  private subscription: Subscription | null = null;
 
   constructor(
     private transactionService: TransactionService,
@@ -48,6 +44,16 @@ export class Reports implements OnInit, AfterViewInit {
 
   async ngOnInit() {
     await this.loadData();
+
+    this.subscription = this.transactionService.transactionsUpdated$.subscribe(async () => {
+      await this.loadData();
+    });
+  }
+
+  ngOnDestroy() {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 
   ngAfterViewInit() {

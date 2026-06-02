@@ -1,6 +1,7 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { Subscription } from 'rxjs';
 import { AuthService } from '../../../core/services/auth';
 import { TransactionService, Transaction } from '../../../core/services/transaction';
 import { Navbar } from '../../../shared/components/navbar/navbar';
@@ -12,7 +13,7 @@ import { Navbar } from '../../../shared/components/navbar/navbar';
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss'
 })
-export class Dashboard implements OnInit {
+export class Dashboard implements OnInit, OnDestroy {
 
   userName = '';
   loading = true;
@@ -25,11 +26,13 @@ export class Dashboard implements OnInit {
   currentYear = new Date().getFullYear();
   currentMonthName = new Date().toLocaleString('pt-BR', { month: 'long', year: 'numeric' });
 
+  private subscription: Subscription | null = null;
+
   constructor(
     private authService: AuthService,
     private transactionService: TransactionService,
     private router: Router,
-    private cdr: ChangeDetectorRef // detecta mudanças manualmente
+    private cdr: ChangeDetectorRef
   ) {
     console.log('Dashboard iniciado!');
   }
@@ -40,10 +43,20 @@ export class Dashboard implements OnInit {
       const user = await this.authService.getUser();
       this.userName = user?.user_metadata?.['name'] || user?.user_metadata?.['full_name'] || user?.email || 'Usuário';
       await this.loadTransactions();
+
+      this.subscription = this.transactionService.transactionsUpdated$.subscribe(async () => {
+        await this.loadTransactions();
+      });
     } catch (error) {
       console.error('Erro no ngOnInit:', error);
       this.loading = false;
-      this.cdr.detectChanges(); // força atualização da tela
+      this.cdr.detectChanges();
+    }
+  }
+
+  ngOnDestroy() {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
     }
   }
 
