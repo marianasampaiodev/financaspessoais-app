@@ -46,6 +46,11 @@ export const routes: Routes = [
   loadComponent: () =>
     import('./features/reports/reports/reports').then(m => m.Reports)
 },
+{
+  path: 'confirm',
+  loadComponent: () =>
+    import('./features/auth/confirm/confirm').then(m => m.Confirm)
+},
   {
     path: '**',
     redirectTo: 'dashboard'

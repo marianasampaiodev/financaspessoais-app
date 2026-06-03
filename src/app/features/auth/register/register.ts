@@ -59,17 +59,22 @@ export class Register {
     this.errorMessage = '';
     this.successMessage = '';
 
+
     try {
-      await this.authService.signUp(
-        this.form.value.email,
-        this.form.value.password,
-        this.form.value.name
-      );
-      this.successMessage = 'Conta criada! Verifique seu email para confirmar o cadastro.';
-    } catch (error: any) {
-      this.errorMessage = 'Erro ao criar conta. Tente novamente.';
-    } finally {
-      this.loading = false;
-    }
+  await this.authService.signUp(
+    this.form.value.email,
+    this.form.value.password,
+    this.form.value.name
+  );
+  // Limpa o formulário e mostra mensagem clara
+  this.form.reset();
+  this.successMessage = '✅ Conta criada com sucesso! Verifique seu email e clique no link de confirmação para ativar sua conta.';
+} catch (error: any) {
+  if (error.message?.includes('already registered')) {
+    this.errorMessage = 'Este email já está cadastrado. Tente fazer login.';
+  } else {
+    this.errorMessage = 'Erro ao criar conta. Tente novamente.';
+  }
+}
   }
 }
