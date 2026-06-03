@@ -34,7 +34,9 @@ export class AuthService {
       }
     });
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 

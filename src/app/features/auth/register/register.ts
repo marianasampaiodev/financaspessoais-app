@@ -70,18 +70,23 @@ export class Register {
       this.successMessage = '✅ Conta criada com sucesso! Verifique seu email e clique no link de confirmação para ativar sua conta.';
 
     } catch (error: any) {
-      console.log('Erro:', error.message);
+      const message = (error?.message || error?.toString?.() || JSON.stringify(error)).toLowerCase();
+      console.log('Erro:', error);
+      console.log('Mensagem de erro:', message);
+      console.log('Status:', error?.status);
 
       // Verifica o tipo de erro e exibe mensagem apropriada
       if (
-        error.message?.includes('already registered') ||
-        error.message?.includes('User already registered') ||
-        error.message?.includes('email already')
+        message.includes('already registered') ||
+        message.includes('user already registered') ||
+        message.includes('already exists') ||
+        message.includes('duplicate') ||
+        message.includes('email already')
       ) {
         this.errorMessage = 'Este email já está cadastrado. Tente fazer login ou use outro email.';
-      } else if (error.message?.includes('invalid email')) {
+      } else if (message.includes('invalid email')) {
         this.errorMessage = 'Digite um email válido.';
-      } else if (error.message?.includes('weak password')) {
+      } else if (message.includes('weak password') || message.includes('password must be at least')) {
         this.errorMessage = 'A senha é muito fraca. Use pelo menos 6 caracteres.';
       } else {
         this.errorMessage = 'Erro ao criar conta. Tente novamente.';
