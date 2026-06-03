@@ -37,6 +37,16 @@ export class AuthService {
     if (error) {
       throw error;
     }
+
+    // Supabase pode retornar um objeto de usuário obfuscado quando o email
+    // já existe e a confirmação de email está habilitada. Nesse caso, não
+    // devemos considerar o cadastro como bem-sucedido.
+    if (data?.user && !data?.session && data.user.email_confirmed_at) {
+      const duplicateError = new Error('User already registered');
+      duplicateError.name = 'AuthApiError';
+      throw duplicateError;
+    }
+
     return data;
   }
 
