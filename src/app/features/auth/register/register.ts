@@ -59,22 +59,36 @@ export class Register {
     this.errorMessage = '';
     this.successMessage = '';
 
-
     try {
-  await this.authService.signUp(
-    this.form.value.email,
-    this.form.value.password,
-    this.form.value.name
-  );
-  // Limpa o formulário e mostra mensagem clara
-  this.form.reset();
-  this.successMessage = '✅ Conta criada com sucesso! Verifique seu email e clique no link de confirmação para ativar sua conta.';
-} catch (error: any) {
-  if (error.message?.includes('already registered')) {
-    this.errorMessage = 'Este email já está cadastrado. Tente fazer login.';
-  } else {
-    this.errorMessage = 'Erro ao criar conta. Tente novamente.';
-  }
-}
+      await this.authService.signUp(
+        this.form.value.email,
+        this.form.value.password,
+        this.form.value.name
+      );
+      // Limpa o formulário e mostra mensagem clara
+      this.form.reset();
+      this.successMessage = '✅ Conta criada com sucesso! Verifique seu email e clique no link de confirmação para ativar sua conta.';
+
+    } catch (error: any) {
+      console.log('Erro:', error.message);
+
+      // Verifica o tipo de erro e exibe mensagem apropriada
+      if (
+        error.message?.includes('already registered') ||
+        error.message?.includes('User already registered') ||
+        error.message?.includes('email already')
+      ) {
+        this.errorMessage = 'Este email já está cadastrado. Tente fazer login ou use outro email.';
+      } else if (error.message?.includes('invalid email')) {
+        this.errorMessage = 'Digite um email válido.';
+      } else if (error.message?.includes('weak password')) {
+        this.errorMessage = 'A senha é muito fraca. Use pelo menos 6 caracteres.';
+      } else {
+        this.errorMessage = 'Erro ao criar conta. Tente novamente.';
+      }
+
+    } finally {
+      this.loading = false;
+    }
   }
 }
