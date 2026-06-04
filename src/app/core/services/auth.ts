@@ -34,7 +34,28 @@ export class AuthService {
       }
     });
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
+
+    // Supabase pode retornar um objeto de usuário ofuscado sem sessão quando o
+    // email já existe e o usuário está confirmado. Nesse caso, não devemos
+    // considerar o cadastro como bem-sucedido.
+    if (data?.user && !data?.session) {
+      const user = data.user;
+      const duplicateUserDetected =
+        !user.email ||
+        !!user.email_confirmed_at ||
+        !!user.phone_confirmed_at ||
+        (Array.isArray(user.identities) && user.identities.length === 0);
+
+      if (duplicateUserDetected) {
+        const duplicateError = new Error('User already registered');
+        duplicateError.name = 'AuthApiError';
+        throw duplicateError;
+      }
+    }
+
     return data;
   }
 
