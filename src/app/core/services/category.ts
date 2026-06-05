@@ -22,6 +22,7 @@ export class CategoryService {
     { name: 'Educação', color: '#FFE66D', type: 'expense' },
     { name: 'Lazer', color: '#FF85A2', type: 'expense' },
     { name: 'Compras', color: '#B19CD9', type: 'expense' },
+    { name: 'Fixas', color: '#c4db3d', type: 'expense' },
     { name: 'Outros', color: '#A5D6A7', type: 'expense' },
     // Receitas
     { name: 'Salário', color: '#6BCB77', type: 'income' },
