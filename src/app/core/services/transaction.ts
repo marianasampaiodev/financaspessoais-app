@@ -53,21 +53,20 @@ export class TransactionService {
   }
 
   // Cria uma nova transação
+  async create(transaction: Transaction): Promise<void> {
+    const { data: { user } } = await this.supabase.client.auth.getUser();
 
- async create(transaction: Transaction): Promise<void> {
-  const { data: { user } } = await this.supabase.client.auth.getUser();
+    const { error } = await this.supabase.client
+      .from('transactions')
+      .insert({
+        ...transaction,
+        category_id: transaction.category_id || null,
+        user_id: user?.id
+      });
 
-  const { error } = await this.supabase.client
-    .from('transactions')
-    .insert({
-      ...transaction,
-      // converte string vazia para null para não quebrar o banco
-      category_id: transaction.category_id || null,
-      user_id: user?.id
-    });
-
-  if (error) throw error;
-}
+    if (error) throw error;
+    this.transactionsUpdated.next();
+  }
 
   // Deleta uma transação
   async delete(id: string): Promise<void> {
